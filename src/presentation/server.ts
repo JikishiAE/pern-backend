@@ -2,6 +2,10 @@ import express, { Router } from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import sequelize from '../db-connection';
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerOptions from '../swaggerConfig';
+import { errorHandler } from './middlewares/errorHandler.middleware';
 
 interface Options {
   port: number;
@@ -44,8 +48,13 @@ export class Server {
     //* Configurar CORS
     this.app.use(cors());
 
+    const swaggerSpec = swaggerJsdoc(swaggerOptions);
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
     //* Routes
     this.app.use('/api', this.routes );
+
+    this.app.use(errorHandler);
     
 
     this.serverListener = this.app.listen(this.port, () => {

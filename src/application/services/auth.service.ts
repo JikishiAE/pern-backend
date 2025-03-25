@@ -31,7 +31,7 @@ export class AuthService {
       };
 
     } catch (error) {
-      throw CustomError.internalServer(error);
+      throw error;
     }
 
   }
@@ -58,7 +58,7 @@ export class AuthService {
       
     }
     catch (error) {
-      throw CustomError.internalServer(error);
+      throw error;
     }
 
 
