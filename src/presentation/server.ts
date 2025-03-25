@@ -45,7 +45,7 @@ export class Server {
     this.app.use(cors());
 
     //* Routes
-    this.app.use( this.routes );
+    this.app.use('/api', this.routes );
     
 
     this.serverListener = this.app.listen(this.port, () => {
