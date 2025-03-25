@@ -6,6 +6,8 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import swaggerOptions from '../swaggerConfig';
 import { errorHandler } from './middlewares/errorHandler.middleware';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 interface Options {
   port: number;
@@ -40,10 +42,32 @@ export class Server {
       console.error('Unable to connect to the database:', error);
     }
 
+    const limiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 20,
+      message: "Demasiadas peticiones, por favor intente más tarde.",
+      headers: true,
+    });
+
     //* Middlewares
     this.app.use( express.json() ); // raw
     this.app.use( express.urlencoded({ extended: true }) ); // x-www-form-urlencoded
     this.app.use( compression() )
+    this.app.use(limiter);
+
+    this.app.use(
+      helmet.contentSecurityPolicy({
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          imgSrc: ["'self'", "data:"],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+        },
+      })
+    );
 
     //* Configurar CORS
     this.app.use(cors());
