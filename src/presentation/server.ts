@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import compression from 'compression';
+import sequelize from '../db-connection';
 
 interface Options {
   port: number;
@@ -26,7 +27,14 @@ export class Server {
   
   
   async start() {
-    
+
+    //* Sync DB
+    try {
+      await sequelize.sync();
+      console.log('Connection has been established successfully.');
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
+    }
 
     //* Middlewares
     this.app.use( express.json() ); // raw

@@ -10,6 +10,11 @@ export const envs = {
 
   JWT_SEED: get('JWT_SEED').required().asString(),
 
+  DB_NAME: get('DB_NAME').required().asString(),
+  DB_USER: get('DB_USER').required().asString(),
+  DB_HOST: get('DB_HOST').required().asString(),
+  DB_PASSWORD: get('DB_PASSWORD').required().asString(),
+
 }
 
 
