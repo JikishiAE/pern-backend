@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { validateDto } from "../middlewares/validateDto.middleware";
-import { GetIdDto, CreateBusinessDto, GetBusinessDto, UpdateBusinessDto } from "../../domain";
-import { BusinessService } from "../../application";
+import { GetIdDto, CreateProductDto, GetProductsDto, UpdateProductDto } from "../../domain";
+import { ProductsService } from "../../application";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { BusinessRepository } from "../../infrastructure";
-import { BusinessController } from './business.controller';
+import { BusinessRepository, ProductsRepository } from "../../infrastructure";
+import { ProductsController } from './products.controller';
 import { roleMiddleware } from "../middlewares/roles.middleware";
 
-export class BusinessRoutes {
+export class ProductsRoutes {
 
 
     static get routes(): Router {
@@ -15,20 +15,21 @@ export class BusinessRoutes {
         const router = Router();
 
         const businessRepository = new BusinessRepository();
-        const businessService = new BusinessService(businessRepository);
-        const businessController = new BusinessController(businessService);
+        
+        const productRepository = new ProductsRepository();
+        const productService = new ProductsService(productRepository, businessRepository);
+        const productController = new ProductsController(productService);
 
         router.use(authMiddleware);
-        router.use(roleMiddleware(['Negocio']));
 
         /**
          * @openapi
-         * /api/business/getBusiness:
+         * /api/products/getProducts:
          *   post:
          *     tags:
-         *       - Business
-         *     summary: Obtener Negocios
-         *     description: Obtiene una lista de negocios según los filtros proporcionados
+         *       - Products
+         *     summary: Obtener Productos
+         *     description: Obtiene una lista de productos según los filtros proporcionados
          *     requestBody:
          *       required: true
          *       content:
@@ -42,26 +43,28 @@ export class BusinessRoutes {
          *                 type: string
          *     responses:
          *       200:
-         *         description: Negocios
+         *         description: Productos
          *         content:
          *           application/json:
          *             example:
          *               [{ nombre: Tienda... }]
          *       404:
-         *         description: No se encontraron Negocios
+         *         description: No se encontraron Productos
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.post('/getBusiness', validateDto(GetBusinessDto), businessController.get );
+        router.post('/getProducts', validateDto(GetProductsDto), productController.get );
     
+        router.use(roleMiddleware(['Negocio']));
+
         /**
          * @openapi
-         * /api/business/create:
+         * /api/products/create:
          *   post:
          *     tags:
-         *       - Business
-         *     summary: Crear Negocio
-         *     description: Crea un negocio con los datos proporcionados
+         *       - Products
+         *     summary: Crear Producto
+         *     description: Crea un Producto con los datos proporcionados
          *     requestBody:
          *       required: true
          *       content:
@@ -71,11 +74,15 @@ export class BusinessRoutes {
          *             properties:
          *               nombre:
          *                 type: string
-         *               propietario_id:
+         *               negocio_id:
+         *                 type: number
+         *               cantidad:
+         *                 type: number
+         *               precio:
          *                 type: number
          *     responses:
          *       200:
-         *         description: Negocios
+         *         description: Productos
          *         content:
          *           application/json:
          *             example:
@@ -83,16 +90,16 @@ export class BusinessRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.post('/create', validateDto(CreateBusinessDto), businessController.create );
+        router.post('/create', validateDto(CreateProductDto), productController.create );
 
         /**
          * @openapi
-         * /api/business/update:
+         * /api/products/update:
          *   put:
          *     tags:
-         *       - Business
-         *     summary: Actualizar Negocio
-         *     description: Actualiza un negocio con los datos proporcionados
+         *       - Products
+         *     summary: Actualizar Producto
+         *     description: Actualiza un Producto con los datos proporcionados
          *     requestBody:
          *       required: true
          *       content:
@@ -104,11 +111,15 @@ export class BusinessRoutes {
          *                 type: number
          *               nombre:
          *                 type: string
-         *               propietario_id:
+         *               negocio_id:
+         *                 type: number
+         *               cantidad:
+         *                 type: number
+         *               precio:
          *                 type: number
          *     responses:
          *       200:
-         *         description: Negocios
+         *         description: Productos
          *         content:
          *           application/json:
          *             example:
@@ -116,16 +127,16 @@ export class BusinessRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.put('/update', validateDto(UpdateBusinessDto), businessController.update );
+        router.put('/update', validateDto(UpdateProductDto), productController.update );
 
         /**
          * @openapi
-         * /api/business/delete:
+         * /api/products/delete:
          *   delete:
          *     tags:
-         *       - Business
-         *     summary: Eliminar Negocio
-         *     description: Elimina un negocio de manera lógica
+         *       - Products
+         *     summary: Eliminar Producto
+         *     description: Elimina un Producto de manera lógica
          *     requestBody:
          *       required: true
          *       content:
@@ -137,11 +148,11 @@ export class BusinessRoutes {
          *                 type: number
          *     responses:
          *       200:
-         *         description: Negocio Eliminado
+         *         description: Producto Eliminado
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.delete('/delete', validateDto(GetIdDto), businessController.delete );
+        router.delete('/delete', validateDto(GetIdDto), productController.delete );
     
     
         return router;

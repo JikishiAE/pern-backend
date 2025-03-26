@@ -1,4 +1,4 @@
-import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min, DataType } from 'sequelize-typescript';
 import Negocio from './negocio.model';
 
 @Table(
@@ -31,7 +31,9 @@ export default class Producto extends Model {
   @AllowNull(false)
   @IsNumeric
   @Min(0)
-  @Column
+  @Column({
+    type: DataType.FLOAT,
+  })
   precio!: number;
 
   @Default(true)

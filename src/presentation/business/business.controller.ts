@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { BusinessIdDto, CreateBusinessDto, GetBusinessDto, UpdateBusinessDto } from '../../domain';
+import { GetIdDto, CreateBusinessDto, GetBusinessDto, UpdateBusinessDto } from '../../domain';
 import { plainToInstance } from 'class-transformer';
 import { BusinessService } from '../../application';
 
@@ -49,7 +49,7 @@ export class BusinessController {
 
     delete = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 
-        const deleteDto = plainToInstance(BusinessIdDto, req.body);
+        const deleteDto = plainToInstance(GetIdDto, req.body);
   
         try {
             await this._businessService.delete(deleteDto.id);

@@ -1,4 +1,4 @@
-import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, HasMany, AutoIncrement, Default, AllowNull, IsNumeric, Min } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, HasMany, AutoIncrement, Default, AllowNull, IsNumeric, Min, DataType } from 'sequelize-typescript';
 import Usuario from './usuario.model';
 import Negocio from './negocio.model';
 import OrdenProducto from './orden_producto.model';
@@ -31,19 +31,25 @@ export default class Orden extends Model {
   @AllowNull(false)
   @IsNumeric
   @Min(0)
-  @Column
+  @Column({
+    type: DataType.FLOAT,
+  })
   subtotal!: number;
 
   @AllowNull(false)
   @IsNumeric
   @Min(0)
-  @Column
+  @Column({
+    type: DataType.FLOAT,
+  })
   iva!: number;
 
   @AllowNull(false)
   @IsNumeric
   @Min(0)
-  @Column
+  @Column({
+    type: DataType.FLOAT,
+  })
   total!: number;
 
   @BelongsTo(() => Usuario)

@@ -1,11 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../../domain";
-
-interface User {
-    id: number;
-    role: string;
-}
+import { CustomError, User } from "../../domain";
 
 export const checkPropertyMiddleware = (dtoClass: any) => (req: Request, res: Response, next: NextFunction) => {
 

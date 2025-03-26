@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../../domain";
-
-interface User {
-  role: string;
-}
+import { CustomError, User } from "../../domain";
 
 export const roleMiddleware = (allowedRoles: string[]) => (req: Request, res: Response, next: NextFunction) => {
 
