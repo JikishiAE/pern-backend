@@ -44,6 +44,7 @@ export class AuthService {
       const user = await this._usersRepository.findByEmail(loginUserDto.correo);
       
       if (!user) throw CustomError.badRequest('Email not exist');
+      if (!user.emailValidated) throw CustomError.forbidden('User has not been validated');
   
       const isMatching = bcryptAdapter.compare( loginUserDto.contrasena, user.password );
       if ( !isMatching ) throw CustomError.badRequest('Password is not valid');

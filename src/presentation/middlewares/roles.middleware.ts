@@ -1,19 +1,26 @@
 import { Request, Response, NextFunction } from "express";
+import { CustomError } from "../../domain";
 
 interface User {
   role: string;
 }
 
 export const roleMiddleware = (allowedRoles: string[]) => (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as Request & { user: User }).user;
 
-    if (!user) {
-        return res.status(401).json({ message: "No autorizado, usuario no encontrado" });
+    try {
+        const user = (req as Request & { user: User }).user;
+
+        if (!user) {
+            throw CustomError.unauthorized("No autorizado, usuario no encontrado");
+        }
+
+        if (!allowedRoles.includes(user.role)) {
+            throw CustomError.forbidden("Acceso denegado: No tienes el rol necesario");
+        }
+
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    if (!allowedRoles.includes(user.role)) {
-        return res.status(403).json({ message: "Acceso denegado: No tienes el rol necesario" });
-    }
-
-    next();
+    
 };

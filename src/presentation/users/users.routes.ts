@@ -23,7 +23,7 @@ export class UserRoutes {
         /**
          * @openapi
          * /api/users/getUsers:
-         *   put:
+         *   post:
          *     tags:
          *       - Users
          *     summary: Obtener Usuarios
