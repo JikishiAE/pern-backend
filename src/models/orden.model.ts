@@ -3,7 +3,13 @@ import Usuario from './usuario.model';
 import Negocio from './negocio.model';
 import OrdenProducto from './orden_producto.model';
 
-@Table({ tableName: 'ordenes' })
+@Table(
+  { 
+    tableName: 'ordenes',
+    timestamps: true,
+    paranoid: true,
+  }
+)
 export default class Orden extends Model {
   @PrimaryKey
   @AutoIncrement

@@ -1,7 +1,13 @@
 import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min } from 'sequelize-typescript';
 import Negocio from './negocio.model';
 
-@Table({ tableName: 'productos' })
+@Table(
+  { 
+    tableName: 'productos',
+    timestamps: true,
+    paranoid: true,
+  }
+)
 export default class Producto extends Model {
   @PrimaryKey
   @AutoIncrement

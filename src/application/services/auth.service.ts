@@ -1,5 +1,5 @@
-import { JwtAdapter, bcryptAdapter, envs } from '../../config';
-import { CustomError, LoginUserDto, RegisterUserDto, UserEntity } from '../../domain';
+import { JwtAdapter, bcryptAdapter } from '../../config';
+import { CustomError, LoginUserDto, RegisterUserDto, UserEntity, ValidateUserDto } from '../../domain';
 import { UsersRepository } from '../../infrastructure/repositories/users/users.repository';
 
 
@@ -55,6 +55,24 @@ export class AuthService {
         user: user,
         token: token,
       }
+      
+    }
+    catch (error) {
+      throw error;
+    }
+
+
+  }
+
+  public async validateUser( validateUserDto: ValidateUserDto ) {
+
+    try {
+      
+      const user = await this._usersRepository.findByEmail(validateUserDto.correo);
+      
+      if (!user) throw CustomError.badRequest('Email not exist');
+
+      await this._usersRepository.validateUser(validateUserDto.correo);
       
     }
     catch (error) {
