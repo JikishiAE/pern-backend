@@ -5,6 +5,7 @@ import { GetUsersDto, UpdateUserDto, UserIdDto } from "../../domain";
 import { UsersService } from "../../application";
 import { UsersController } from "./users.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import { checkPropertyMiddleware } from "../middlewares/checkProperty.middleware";
 
 export class UserRoutes {
 
@@ -89,7 +90,7 @@ export class UserRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.put('/update', validateDto(UpdateUserDto), usersController.updateUser );
+        router.put('/update', validateDto(UpdateUserDto), checkPropertyMiddleware(UpdateUserDto), usersController.updateUser );
 
         /**
          * @openapi
