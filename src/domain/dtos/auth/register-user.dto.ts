@@ -1,11 +1,14 @@
+import { Expose } from 'class-transformer';
 import { IsEmail, IsIn, IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class RegisterUserDto {
 
+  @Expose()
   @IsString()
   @IsNotEmpty()
   nombre!: string;
 
+  @Expose()
   @IsString()
   @IsNotEmpty()
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}/, {
@@ -13,6 +16,7 @@ export class RegisterUserDto {
   })
   contrasena!: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsEmail()
   @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
@@ -20,6 +24,7 @@ export class RegisterUserDto {
   })
   correo!: string;
 
+  @Expose()
   @IsString()
   @IsNotEmpty()
   @IsIn(["Cliente", "Negocio"], {

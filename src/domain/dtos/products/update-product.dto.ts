@@ -1,7 +1,9 @@
 import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { CreateProductDto } from './create-product.dto';
+import { Expose } from 'class-transformer';
 
 export class UpdateProductDto extends CreateProductDto {
+  @Expose()
   @IsNumber()
   @IsNotEmpty({ message: 'El id es obligatorio' })
   id!: number;

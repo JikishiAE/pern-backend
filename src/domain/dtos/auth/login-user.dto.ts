@@ -1,7 +1,9 @@
+import { Expose } from 'class-transformer';
 import { IsString, IsNotEmpty, Matches, IsEmail } from 'class-validator';
 
 export class LoginUserDto {
 
+  @Expose()
   @IsString()
   @IsNotEmpty()
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}/, {
@@ -9,6 +11,7 @@ export class LoginUserDto {
   })
   contrasena!: string;
 
+  @Expose()
   @IsNotEmpty()
   @IsEmail()
   @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {

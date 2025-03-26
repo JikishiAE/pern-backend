@@ -2,6 +2,7 @@ import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, HasMany, AutoI
 import Usuario from './usuario.model';
 import Negocio from './negocio.model';
 import OrdenProducto from './orden_producto.model';
+import EstatusOrden from './estatus_orden.model';
 
 @Table(
   { 
@@ -24,9 +25,11 @@ export default class Orden extends Model {
   @Column
   negocio_id!: number;
 
-  @Default('Por pagar')
+  @ForeignKey(() => EstatusOrden)
+  @AllowNull(false)
+  @Default(1)
   @Column
-  estatus!: 'Por pagar' | 'Pagada' | 'Devuelta' | 'Cancelada';
+  estatus_id!: number;
 
   @AllowNull(false)
   @IsNumeric
@@ -57,6 +60,9 @@ export default class Orden extends Model {
 
   @BelongsTo(() => Negocio)
   negocio!: Negocio;
+
+  @BelongsTo(() => EstatusOrden)
+  estatus!: EstatusOrden;
 
   @HasMany(() => OrdenProducto)
   productos!: OrdenProducto[];

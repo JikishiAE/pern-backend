@@ -1,4 +1,4 @@
-import { Column, Model, PrimaryKey, Table, ForeignKey, AutoIncrement, AllowNull, IsNumeric, Min } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, ForeignKey, AutoIncrement, AllowNull, IsNumeric, Min, BelongsTo } from 'sequelize-typescript';
 import Orden from './orden.model';
 import Producto from './producto.model';
 
@@ -28,4 +28,10 @@ export default class OrdenProducto extends Model {
   @Min(1)
   @Column
   cantidad!: number;
+
+  @BelongsTo(() => Orden)
+  orden!: Orden;
+
+  @BelongsTo(() => Producto)
+  producto!: Producto;
 }

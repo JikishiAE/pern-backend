@@ -3,6 +3,7 @@ import { AuthRoutes } from './auth/auth.routes';
 import { UserRoutes } from './users/users.routes';
 import { BusinessRoutes } from './business/business.routes';
 import { ProductsRoutes } from './products/products.routes';
+import { OrdersRoutes } from './orders/orders.routes';
 
 
 export class AppRoutes {
@@ -17,6 +18,8 @@ export class AppRoutes {
     router.use('/user', UserRoutes.routes );
 
     router.use('/business', BusinessRoutes.routes );
+
+    router.use('/orders', OrdersRoutes.routes )
 
     router.use('/products', ProductsRoutes.routes );
 

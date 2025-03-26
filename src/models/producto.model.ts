@@ -1,5 +1,6 @@
-import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min, DataType } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min, DataType, HasMany } from 'sequelize-typescript';
 import Negocio from './negocio.model';
+import OrdenProducto from './orden_producto.model';
 
 @Table(
   { 
@@ -42,4 +43,7 @@ export default class Producto extends Model {
 
   @BelongsTo(() => Negocio)
   negocio!: Negocio;
+
+  @HasMany(() => OrdenProducto)
+  ordenesProductos!: OrdenProducto[];
 }

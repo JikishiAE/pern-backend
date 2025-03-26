@@ -6,7 +6,7 @@ export const validateDto = (dtoClass: any) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const dtoInstance = plainToInstance(dtoClass, req.body);
 
-    validate(dtoInstance).then((errors) => {
+    validate(dtoInstance, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
       if (errors.length > 0) {
         const errorMessages = errors.map((err) => ({
           field: err.property,
