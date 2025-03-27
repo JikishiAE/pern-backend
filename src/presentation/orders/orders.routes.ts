@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { validateDto } from "../middlewares/validateDto.middleware";
-import { CreateOrderDto, GetIdDto, GetOrdersDto } from "../../domain";
+import { AddProductOrderDto, CreateOrderDto, GetIdDto, GetOrdersDto, RemoveProductOrderDto } from "../../domain";
 import { OrdersService } from "../../application";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { BusinessRepository, OrdersRepository } from "../../infrastructure";
 import { OrdersController } from './orders.controller';
+import { roleMiddleware } from "../middlewares/roles.middleware";
 
 export class OrdersRoutes {
 
@@ -56,7 +57,7 @@ export class OrdersRoutes {
 
         /**
          * @openapi
-         * /api/products/create:
+         * /api/orders/create:
          *   post:
          *     tags:
          *       - Orders
@@ -88,14 +89,14 @@ export class OrdersRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.post('/create', validateDto(CreateOrderDto), ordersController.create );
+        router.post('/create', roleMiddleware(['Cliente']), validateDto(CreateOrderDto), ordersController.create );
 
         /**
          * @openapi
-         * /api/products/update:
+         * /api/orders/update:
          *   put:
          *     tags:
-         *       - Products
+         *       - Orders
          *     summary: Actualizar Producto
          *     description: Actualiza un Producto con los datos proporcionados
          *     requestBody:
@@ -107,17 +108,16 @@ export class OrdersRoutes {
          *             properties:
          *               id:
          *                 type: number
-         *               nombre:
-         *                 type: string
-         *               negocio_id:
-         *                 type: number
-         *               cantidad:
-         *                 type: number
-         *               precio:
-         *                 type: number
+         *               producto:
+         *                 type: object
+         *                 properties:
+         *                   id: 
+         *                     type: number
+         *                   cantidad: 
+         *                     type: number
          *     responses:
          *       200:
-         *         description: Ordenes
+         *         description: Ordenes - update product
          *         content:
          *           application/json:
          *             example:
@@ -125,14 +125,45 @@ export class OrdersRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        //router.put('/update', validateDto(UpdateProductDto), productController.update );
+        router.put('/update', roleMiddleware(['Cliente']), validateDto(AddProductOrderDto), ordersController.updateOrderProduct );
 
         /**
          * @openapi
-         * /api/products/delete:
+         * /api/orders/remove:
          *   delete:
          *     tags:
-         *       - Products
+         *       - Orders
+         *     summary: Eliminar Producto
+         *     description: Elimina un Producto con los datos proporcionados
+         *     requestBody:
+         *       required: true
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               id:
+         *                 type: number
+         *               producto_id:
+         *                 type: number
+         *     responses:
+         *       200:
+         *         description: Ordenes - delete product
+         *         content:
+         *           application/json:
+         *             example:
+         *               { nombre: tienda... }
+         *       401:
+         *         description: Credenciales incorrectas
+         */
+        router.delete('/remove', roleMiddleware(['Cliente']), validateDto(RemoveProductOrderDto), ordersController.removeOrderProduct );
+
+        /**
+         * @openapi
+         * /api/orders/delete:
+         *   delete:
+         *     tags:
+         *       - Orders
          *     summary: Eliminar Orden
          *     description: Elimina una Orden de manera lógica
          *     requestBody:
@@ -150,7 +181,7 @@ export class OrdersRoutes {
          *       401:
          *         description: Credenciales incorrectas
          */
-        router.delete('/delete', validateDto(GetIdDto), ordersController.delete );
+        router.delete('/delete', roleMiddleware(['Cliente']), validateDto(GetIdDto), ordersController.delete );
     
     
         return router;

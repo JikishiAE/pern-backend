@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { CreateOrderDto, CustomError, GetOrdersDto, IFilterIds, OrderEntity } from "../../../domain";
+import { AddProductOrderDto, CreateOrderDto, CustomError, GetOrdersDto, IFilterIds, OrderEntity, RemoveProductOrderDto } from "../../../domain";
 import Orden from "../../../models/orden.model";
 import Producto from "../../../models/producto.model";
 import OrdenProducto from "../../../models/orden_producto.model";
@@ -124,6 +124,147 @@ export class OrdersRepository {
             throw error;
         }
     }
+    public async addProduct(dto: AddProductOrderDto): Promise<OrderEntity> {
+        try {
+            return await sequelize.transaction(async (t) => {
+                const order = await Orden.findByPk(dto.id, {
+                    include: [{ model: OrdenProducto, as: "productos" }],
+                    transaction: t,
+                });
+    
+                if (!order) {
+                    throw CustomError.notFound("Orden no encontrada");
+                }
+
+                const product = await Producto.findByPk(dto.producto.id, { transaction: t });
+                if (!product) {
+                    throw CustomError.notFound(`Producto con ID ${dto.producto.id} no encontrado`);
+                }
+
+                if (product.negocio_id !== order.negocio_id) {
+                    throw CustomError.badRequest(
+                        `El producto con ID ${dto.producto.id} no pertenece al negocio de la orden`
+                    );
+                }
+    
+                const productExists = await OrdenProducto.findOne({
+                    where: {
+                        orden_id: dto.id,
+                        producto_id: dto.producto.id,
+                    },
+                    transaction: t,
+                });
+    
+                if (productExists) {
+                    productExists.cantidad = dto.producto.cantidad;
+                    await productExists.save({ transaction: t });
+                } else {
+                    await OrdenProducto.create(
+                        {
+                            orden_id: dto.id,
+                            producto_id: dto.producto.id,
+                            cantidad: dto.producto.cantidad,
+                        },
+                        { transaction: t }
+                    );
+                }
+    
+                const products = await OrdenProducto.findAll({
+                    where: { orden_id: dto.id },
+                    include: [{ model: Producto, as: "producto" }],
+                    transaction: t,
+                });
+    
+                let subtotal = products.reduce(
+                    (sum, item) => sum + item.producto.precio * item.cantidad,
+                    0
+                );
+                const iva = subtotal * 0.16;
+                const total = subtotal + iva;
+    
+                await order.update({ subtotal, iva, total }, { transaction: t });
+
+                const ordenActualizada = await Orden.findByPk(dto.id, {
+                    include: [
+                        {
+                            model: OrdenProducto,
+                            as: "productos",
+                            attributes: ["producto_id", "cantidad"],
+                            include: [{ model: Producto, as: "producto", attributes: ["id", "nombre"] }],
+                        },
+                    ],
+                    transaction: t,
+                });
+
+                if (!ordenActualizada) {
+                    throw CustomError.internalServer(`No se encontraron registros al actualizar los productos de la orden: ${dto.id}`)
+                }
+    
+                return OrderEntity.fromObject(ordenActualizada);
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+    public async removeProduct(dto: RemoveProductOrderDto): Promise<OrderEntity> {
+        try {
+            return await sequelize.transaction(async (t) => {
+                const orden = await Orden.findByPk(dto.id, {
+                    include: [{ model: OrdenProducto, as: "productos" }],
+                    transaction: t,
+                });
+    
+                if (!orden) {
+                    throw new Error("Orden no encontrada");
+                }
+    
+                const productoOrden = await OrdenProducto.findOne({
+                    where: {
+                        orden_id: dto.id,
+                        producto_id: dto.producto_id,
+                    },
+                    transaction: t,
+                });
+    
+                if (!productoOrden) {
+                    throw new Error(`El producto con ID ${dto.producto_id} no está en la orden`);
+                }
+    
+                await productoOrden.destroy({ transaction: t });
+    
+                const productosRestantes = await OrdenProducto.findAll({
+                    where: { orden_id: dto.id },
+                    include: [{ model: Producto, as: "producto" }],
+                    transaction: t,
+                });
+    
+                let subtotal = productosRestantes.reduce(
+                    (sum, item) => sum + item.producto.precio * item.cantidad,
+                    0
+                );
+                const iva = subtotal * 0.16;
+                const total = subtotal + iva;
+    
+                await orden.update({ subtotal, iva, total }, { transaction: t });
+    
+                const ordenActualizada = await Orden.findByPk(dto.id, {
+                    include: [
+                        {
+                            model: OrdenProducto,
+                            as: "productos",
+                            attributes: ["producto_id", "cantidad"],
+                            include: [{ model: Producto, as: "producto", attributes: ["id", "nombre"] }],
+                        },
+                    ],
+                    transaction: t,
+                });
+    
+                return OrderEntity.fromObject(ordenActualizada!);
+            });
+        } catch (error) {
+            throw error;
+        }
+    }    
     public async delete(id: number) {
         try {
 

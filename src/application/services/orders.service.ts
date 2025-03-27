@@ -1,4 +1,4 @@
-import { CreateOrderDto, CustomError, GetOrdersDto, IFilterIds, OrderEntity, User } from "../../domain";
+import { AddProductOrderDto, CreateOrderDto, CustomError, GetOrdersDto, IFilterIds, OrderEntity, RemoveProductOrderDto, User } from "../../domain";
 import { BusinessRepository, OrdersRepository } from "../../infrastructure";
 
 export class OrdersService {
@@ -24,6 +24,17 @@ export class OrdersService {
         // }
         else {
             throw CustomError.forbidden("Usuario inválido");
+        }
+    }
+    public async checkOrderAvailability(id_order: number) {
+        const order = await this._ordersRepository.findById(id_order);
+
+        if ( !order ) {
+            throw CustomError.notFound("No se ha encontrado la orden");
+        }
+
+        if (order.id_status !== 1) {
+            throw CustomError.badRequest("Esta orden no se puede editar");
         }
     }
     public async get(filters: GetOrdersDto, user: User): Promise<OrderEntity[]> {
@@ -63,6 +74,28 @@ export class OrdersService {
             const newEntity = await this._ordersRepository.create(item, userId);
         
             return newEntity;
+        
+        } catch (error) {
+            throw error;
+        }
+    }
+    public async addProduct(item: AddProductOrderDto): Promise<OrderEntity> {
+        try {
+        
+            const updatedEntity = await this._ordersRepository.addProduct(item);
+        
+            return updatedEntity;
+        
+        } catch (error) {
+            throw error;
+        }
+    }
+    public async removeProduct(item: RemoveProductOrderDto): Promise<OrderEntity> {
+        try {
+        
+            const updatedEntity = await this._ordersRepository.removeProduct(item);
+        
+            return updatedEntity;
         
         } catch (error) {
             throw error;

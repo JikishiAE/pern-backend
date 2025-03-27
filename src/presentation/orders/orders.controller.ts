@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateOrderDto, GetIdDto, GetOrdersDto, User } from '../../domain';
+import { AddProductOrderDto, CreateOrderDto, GetIdDto, GetOrdersDto, RemoveProductOrderDto, User } from '../../domain';
 import { plainToInstance } from 'class-transformer';
 import { OrdersService } from '../../application';
 
@@ -39,6 +39,39 @@ export class OrdersController {
         try {
             const newOrder = await this._ordersService.create(createDto!, user.id);
             return res.json(newOrder);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    updateOrderProduct = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    
+        const addDto = plainToInstance(AddProductOrderDto, req.body);
+
+        const user = this.getUser(req);
+    
+        try {
+            await this._ordersService.checkUser(user, addDto.id);
+
+            const updatedOrder = await this._ordersService.addProduct(addDto!);
+
+            return res.json(updatedOrder);
+        } catch (error) {
+            next(error);
+        }
+    }
+    removeOrderProduct = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    
+        const updateDto = plainToInstance(RemoveProductOrderDto, req.body);
+
+        const user = this.getUser(req);
+    
+        try {
+            await this._ordersService.checkUser(user, updateDto.id);
+
+            const updatedOrder = await this._ordersService.removeProduct(updateDto!);
+
+            return res.json(updatedOrder);
         } catch (error) {
             next(error);
         }

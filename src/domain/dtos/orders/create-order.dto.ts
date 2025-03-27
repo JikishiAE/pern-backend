@@ -1,6 +1,6 @@
-import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
-import { IProduct } from '../../interfaces';
-import { Expose } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { ProductDto } from '../products';
 
 export class CreateOrderDto {
 
@@ -11,6 +11,8 @@ export class CreateOrderDto {
 
   @Expose()
   @IsArray()
-  productos!: IProduct[];
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
+  productos!: ProductDto[];
 
 }

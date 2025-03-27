@@ -13,6 +13,4 @@ export class RemoveProductOrderDto {
     @IsNotEmpty()
     producto_id!: number;
 
-    user_id!: number;
-
 }
