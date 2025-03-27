@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateOrderDto, GetOrdersDto, User } from '../../domain';
+import { CreateOrderDto, GetIdDto, GetOrdersDto, User } from '../../domain';
 import { plainToInstance } from 'class-transformer';
 import { OrdersService } from '../../application';
 
@@ -44,21 +44,21 @@ export class OrdersController {
         }
     }
 
-    // delete = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    delete = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 
-    //     const deleteDto = plainToInstance(GetIdDto, req.body);
+        const deleteDto = plainToInstance(GetIdDto, req.body);
 
-    //     const user_id = this.getUser(req).id;
+        const user = this.getUser(req);
   
-    //     try {
-    //         await this._ordersService.checkPropertyByIdProduct(deleteDto.id, user_id);
+        try {
+            await this._ordersService.checkUser(user, deleteDto.id);
 
-    //         await this._ordersService.delete(deleteDto.id);
+            await this._ordersService.delete(deleteDto.id);
 
-    //         return res.json();
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // }
+            return res.json();
+        } catch (error) {
+            next(error);
+        }
+    }
 
 } 

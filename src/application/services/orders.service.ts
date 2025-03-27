@@ -12,18 +12,18 @@ export class OrdersService {
         const order = await this._ordersRepository.findById(id_order);
 
         if ( !order ) {
-            throw CustomError.internalServer("Ha ocurrido un error en la orden");
+            throw CustomError.notFound("No se ha encontrado la orden");
         }
 
         if (user.role === 'Cliente') {
             if (user.id !== order?.id_user) throw CustomError.forbidden("No tienes acceso a esta orden");
         }
-        else if (user.role === 'Negocio') {
-            const business = await this._businessRepository.findById(order?.id_business);
-            if (user.id !== business?.id_owner) throw CustomError.forbidden("No tienes acceso a esta orden");
-        }
+        // else if (user.role === 'Negocio') {
+        //     const business = await this._businessRepository.findById(order?.id_business);
+        //     if (user.id !== business?.id_owner) throw CustomError.forbidden("No tienes acceso a esta orden");
+        // }
         else {
-            throw CustomError.unauthorized("Usuario inválido");
+            throw CustomError.forbidden("Usuario inválido");
         }
     }
     public async get(filters: GetOrdersDto, user: User): Promise<OrderEntity[]> {
@@ -64,6 +64,15 @@ export class OrdersService {
         
             return newEntity;
         
+        } catch (error) {
+            throw error;
+        }
+    }
+    public async delete(id: number): Promise<void> {
+        try {
+
+            await this._ordersRepository.delete(id);
+
         } catch (error) {
             throw error;
         }

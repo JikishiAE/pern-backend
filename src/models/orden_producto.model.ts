@@ -6,7 +6,6 @@ import Producto from './producto.model';
   { 
     tableName: 'ordenes_productos',
     timestamps: true,
-    paranoid: true,
   }
 )
 export default class OrdenProducto extends Model {

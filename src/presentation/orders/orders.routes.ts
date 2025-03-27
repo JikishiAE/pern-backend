@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateDto } from "../middlewares/validateDto.middleware";
-import { CreateOrderDto, GetOrdersDto } from "../../domain";
+import { CreateOrderDto, GetIdDto, GetOrdersDto } from "../../domain";
 import { OrdersService } from "../../application";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { BusinessRepository, OrdersRepository } from "../../infrastructure";
@@ -133,8 +133,8 @@ export class OrdersRoutes {
          *   delete:
          *     tags:
          *       - Products
-         *     summary: Eliminar Producto
-         *     description: Elimina un Producto de manera lógica
+         *     summary: Eliminar Orden
+         *     description: Elimina una Orden de manera lógica
          *     requestBody:
          *       required: true
          *       content:
@@ -146,11 +146,11 @@ export class OrdersRoutes {
          *                 type: number
          *     responses:
          *       200:
-         *         description: Producto Eliminado
+         *         description: Orden Eliminada
          *       401:
          *         description: Credenciales incorrectas
          */
-        //router.delete('/delete', validateDto(GetIdDto), productController.delete );
+        router.delete('/delete', validateDto(GetIdDto), ordersController.delete );
     
     
         return router;

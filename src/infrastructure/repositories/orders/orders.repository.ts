@@ -124,4 +124,24 @@ export class OrdersRepository {
             throw error;
         }
     }
+    public async delete(id: number) {
+        try {
+
+            const register = await Orden.findByPk(id);
+
+            if (!register) {
+                throw CustomError.notFound("Orden no encontrada");
+            }
+
+            await register.update({
+                estatus_id: 4
+            });
+
+            // await Orden.destroy({ where: { id } });
+
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 }
