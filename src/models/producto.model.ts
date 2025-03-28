@@ -1,7 +1,14 @@
-import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, ForeignKey, BelongsTo, Default, AutoIncrement, AllowNull, IsNumeric, Min, DataType, HasMany } from 'sequelize-typescript';
 import Negocio from './negocio.model';
+import OrdenProducto from './orden_producto.model';
 
-@Table({ tableName: 'productos' })
+@Table(
+  { 
+    tableName: 'productos',
+    timestamps: true,
+    paranoid: true,
+  }
+)
 export default class Producto extends Model {
   @PrimaryKey
   @AutoIncrement
@@ -25,7 +32,9 @@ export default class Producto extends Model {
   @AllowNull(false)
   @IsNumeric
   @Min(0)
-  @Column
+  @Column({
+    type: DataType.FLOAT,
+  })
   precio!: number;
 
   @Default(true)
@@ -34,4 +43,7 @@ export default class Producto extends Model {
 
   @BelongsTo(() => Negocio)
   negocio!: Negocio;
+
+  @HasMany(() => OrdenProducto)
+  ordenesProductos!: OrdenProducto[];
 }

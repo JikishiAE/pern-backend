@@ -2,7 +2,13 @@ import { Column, Model, PrimaryKey, Table, HasMany, AutoIncrement, AllowNull, Un
 import Negocio from './negocio.model';
 import Orden from './orden.model';
 
-@Table({ tableName: 'usuarios' })
+@Table(
+  { 
+    tableName: 'usuarios',
+    timestamps: true,
+    paranoid: true,
+  }
+)
 export default class Usuario extends Model {
   @PrimaryKey
   @AutoIncrement

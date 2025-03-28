@@ -17,7 +17,9 @@ const options: Options = {
       tags: [
         { name: "Auth", description: "Endpoints de autenticación" },
         { name: "Users", description: "Gestión de usuarios" },
+        { name: "Business", description: "Gestión de negocios" },
         { name: "Products", description: "Gestión de productos" },
+        { name: "Orders", description: "Gestión de ordenes de productos" },
       ],
     },
     apis: ["src/presentation/**/*.ts"],
